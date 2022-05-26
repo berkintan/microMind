@@ -10,6 +10,8 @@
 ZumoReflectanceSensorArray reflectanceSensors;
 ZumoMotors motors;
 
+unsigned int obstacle = 0;
+
 // Define an array for holding sensor values.
 unsigned int sensorValues[NUM_SENSORS];
 unsigned int positionVal = 0;
@@ -70,7 +72,7 @@ unsigned int mostRightSensor() {
 }
 
 void turnRight() {
-  motors.setSpeeds(100, -100);
+  motors.setSpeeds(150, -150); 
 }
 
 void turnLeft() {
@@ -78,26 +80,48 @@ void turnLeft() {
 }
 
 void go() {
-  motors.setSpeeds(550, 550);
+  motors.setSpeeds(600, 600); // değiştir
 }
+
+int countObstacles() {
+  if(digitalRead(MZ80_PIN)) {
+    obstacle += 1;
+  }
+  return obstacle;
+}
+  
+  void blinkLED() {
+    countObstacles();
+    for(int i = 0; i <= obstacle; i++) {
+        digitalWrite(LED_PIN, HIGH);
+        delay(100);
+    }
+  }
+
+  void stop() {
+    motors.setSpeeds(0, 0);
+  }
 
 void loop() {
   
   positionVal = reflectanceSensors.readLine(sensorValues);
 
-  if (mostLeftSensor() == 1 || mostRightSensor() == 1) {
+  if (mostLeftSensor() == 1 || mostRightSensor() == 1 || midLeftSensor() == 1 || midRightSensor() == 1) {
     motors.setSpeeds(-225, -225);
+    delay(650);
     turnRight();
-    delay(300);
+    delay(1000);
   } else {
     go();
   }
 
-  
     if(!digitalRead(MZ80_PIN)) {
      go();
     } else {
       turnRight();
-    }
+      //delay(300);
+      //stop();
+      //blinkLED();
+    } 
     
   }
