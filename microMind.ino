@@ -80,7 +80,7 @@ void turnLeft() {
 }
 
 void go() {
-  motors.setSpeeds(600, 600); // değiştir
+  motors.setSpeeds(600, 600); 
 }
 
 int countObstacles() {
@@ -116,7 +116,8 @@ void loop() {
   }
 
     if(!digitalRead(MZ80_PIN)) {
-     go();
+      obstacle++;
+      go();
     } else {
       turnRight();
       //delay(300);
