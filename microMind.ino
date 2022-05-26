@@ -2,7 +2,6 @@
 #include <ZumoReflectanceSensorArray.h>
 #include <ZumoMotors.h>
 
-
 #define LED_PIN 13
 #define MZ80_PIN 6   
 #define NUM_SENSORS 6
