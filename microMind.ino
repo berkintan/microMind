@@ -17,7 +17,7 @@ unsigned int sensorValues[NUM_SENSORS];
 unsigned int positionVal = 0;
 void setup() {
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  digitalWrite(LED_PIN, LOW);
 
   // --------------------------- Start Of The Calibration -------------------------
   reflectanceSensors.init();
@@ -79,24 +79,20 @@ void turnLeft() {
   motors.setSpeeds(-200, 200);
 }
 
+void goBack() {
+  motors.setSpeeds(-225, -225);
+}
+
 void go() {
   motors.setSpeeds(600, 600); 
 }
-
-int countObstacles() {
-  if(digitalRead(MZ80_PIN)) {
-    obstacle += 1;
-  }
-  return obstacle;
-}
   
-  void blinkLED() {
-    countObstacles();
-    for(int i = 0; i <= obstacle; i++) {
-        digitalWrite(LED_PIN, HIGH);
-        delay(100);
-    }
+void blinkLED(int obstacle) { // new added
+  for(int i = 0; i <= obstacle; i++) {
+      digitalWrite(LED_PIN, HIGH);
+      delay(600); 
   }
+}
 
   void stop() {
     motors.setSpeeds(0, 0);
@@ -107,22 +103,24 @@ void loop() {
   positionVal = reflectanceSensors.readLine(sensorValues);
 
   if (mostLeftSensor() == 1 || mostRightSensor() == 1 || midLeftSensor() == 1 || midRightSensor() == 1) {
-    motors.setSpeeds(-225, -225);
+    goBack();
     delay(650);
     turnRight();
-    delay(1000);
+    //delay(1000); // new removed
   } else {
     go();
   }
 
+
     if(!digitalRead(MZ80_PIN)) {
-      obstacle++;
+      obstacle++; 
       go();
-    } else {
-      turnRight();
-      //delay(300);
-      //stop();
-      //blinkLED();
+       } else {
+       turnRight();
+       delay(700); // newly added
+       stop(); // newly added
+       blinkLED(obstacle);
+      }
     } 
     
-  }
+  

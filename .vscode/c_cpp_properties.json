@@ -6,8 +6,7 @@
             "compilerPath": "",
             "compilerArgs": [],
             "intelliSenseMode": "windows-msvc-x64",
-            "includePath": [
-                "${workspaceFolder}/**",
+            "includePath": ["${workspaceFolder}/**",
                 "C:\\Program Files (x86)\\Arduino\\libraries\\**",
                 "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino",
                 "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/EEPROM/src",
