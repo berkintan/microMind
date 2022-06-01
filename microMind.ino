@@ -12,6 +12,8 @@ ZumoMotors motors;
 
 unsigned int obstacle = 0;
 //unsigned int reload = 0xB71B;
+unsigned long time;
+
 
 // Define an array for holding sensor values.
 unsigned int sensorValues[NUM_SENSORS];
@@ -102,10 +104,11 @@ void go() {
   motors.setSpeeds(600, 600); 
 }
   
-void blinkLED(int obstacle) { // new added
-  for(int i = 0; i <= obstacle; i++) {
+void blinkLED(int obstacle) { 
+    for(int i = 0; i <= obstacle; i++) {
       digitalWrite(LED_PIN, HIGH);
-      delay(600); 
+      delay(600);
+      digitalWrite(LED_PIN, LOW);
   }
 }
 
@@ -115,6 +118,7 @@ void blinkLED(int obstacle) { // new added
 
 void loop() {
   
+  time = millis();
   positionVal = reflectanceSensors.readLine(sensorValues);
 
   if (mostLeftSensor() == 1 || mostRightSensor() == 1 || midLeftSensor() == 1 || midRightSensor() == 1) {
@@ -128,15 +132,14 @@ void loop() {
 
 
     if(!digitalRead(MZ80_PIN)) {
-      obstacle++; 
+      obstacle = obstacle + 1; 
       go();
        } else if(digitalRead(MZ80_PIN)) {
-          turnRight();
-          if(digitalRead(digitalRead(MZ80_PIN))) {
-            turnRight();
-            stop();
-            blinkLED(obstacle);
-          }
+         turnRight();
+         if(time > 20000) {
+           stop();
+           blinkLED(obstacle);
+         }
       } 
 
       }
