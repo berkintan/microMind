@@ -11,13 +11,28 @@ ZumoReflectanceSensorArray reflectanceSensors;
 ZumoMotors motors;
 
 unsigned int obstacle = 0;
+//unsigned int reload = 0xB71B;
 
 // Define an array for holding sensor values.
 unsigned int sensorValues[NUM_SENSORS];
 unsigned int positionVal = 0;
 void setup() {
+
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
+
+
+/////////////////////////////////TIMER////////////////////
+
+  //TCCR1A = 0;
+  //TCCR1B = 0; 
+  //OCR1A = reload;
+  //TCCR1A = 1<<WGM21 // donno
+  //TCCR1B = (1<<CS10) | (1<<CS12); 
+  //TIMSK1 = (1<<OCIE1A); 
+
+//////////////////////////////////////////////////////////////
+
 
   // --------------------------- Start Of The Calibration -------------------------
   reflectanceSensors.init();
@@ -106,7 +121,7 @@ void loop() {
     goBack();
     delay(650);
     turnRight();
-    //delay(1000); // new removed
+    delay(1000); // new removed
   } else {
     go();
   }
@@ -115,12 +130,17 @@ void loop() {
     if(!digitalRead(MZ80_PIN)) {
       obstacle++; 
       go();
-       } else {
-       turnRight();
-       delay(700); // newly added
-       stop(); // newly added
-       blinkLED(obstacle);
+       } else if(digitalRead(MZ80_PIN)) {
+          turnRight();
+          if(digitalRead(digitalRead(MZ80_PIN))) {
+            turnRight();
+            stop();
+            blinkLED(obstacle);
+          }
+      } 
+
       }
-    } 
+
+    
     
   
