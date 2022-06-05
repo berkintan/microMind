@@ -10,9 +10,10 @@
 ZumoReflectanceSensorArray reflectanceSensors;
 ZumoMotors motors;
 
-unsigned int obstacle = 0;
+unsigned int obstacle;
 //unsigned int reload = 0xB71B;
 unsigned long time;
+unsigned long x;
 
 
 // Define an array for holding sensor values.
@@ -22,7 +23,7 @@ void setup() {
 
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
-
+  attachInterrupt(MZ80_PIN, obstacleDedected , RISING); // newly added
 
 /////////////////////////////////TIMER////////////////////
 
@@ -104,11 +105,23 @@ void go() {
   motors.setSpeeds(600, 600); 
 }
   
-void blinkLED(int obstacle) { 
-    for(int i = 0; i <= obstacle; i++) {
+void blinkLED(int obstacleNumber) { 
+    for(int i = 0; i <= obstacleNumber; i++) {
       digitalWrite(LED_PIN, HIGH);
       delay(600);
       digitalWrite(LED_PIN, LOW);
+      delay(600);
+  }
+}
+
+void obstacleDedected() {
+  if(time < 20000 && !digitalRead(MZ80_PIN)) {
+    go();
+    obstacle = obstacle + 1;
+  }
+  if(time >= 20000) {
+    stop();
+    blinkLED(obstacle);
   }
 }
 
@@ -125,24 +138,27 @@ void loop() {
     goBack();
     delay(650);
     turnRight();
-    delay(1000); // new removed
+    delay(100); // new removed
   } else {
     go();
   }
 
 
-    if(!digitalRead(MZ80_PIN)) {
-      obstacle = obstacle + 1; 
-      go();
-       } else if(digitalRead(MZ80_PIN)) {
-         turnRight();
-         if(time > 20000) {
-           stop();
-           blinkLED(obstacle);
-         }
+    if(digitalRead(MZ80_PIN)) {
+      turnRight();
+       } 
+      //else if(!digitalRead(MZ80_PIN)) {
+      //  obstacle++;
+      // }
+
+    if(time > 20000) {
+      obstacleDedected();
+      delay(500000);
+    }
+
       } 
 
-      }
+      
 
     
     
