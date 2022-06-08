@@ -23,7 +23,7 @@ void setup() {
 
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
-  attachInterrupt(MZ80_PIN, obstacleDedected , RISING); // newly added
+  attachInterrupt(MZ80_PIN, obstacleDetected , RISING); // newly added
 
 /////////////////////////////////TIMER////////////////////
 
@@ -114,15 +114,22 @@ void blinkLED(int obstacleNumber) {
   }
 }
 
-void obstacleDedected() {
-  if(time < 20000 && !digitalRead(MZ80_PIN)) {
+void obstacleDetected() {
+  if(time < 20000) {
     go();
-    obstacle = obstacle + 1;
-  }
-  if(time >= 20000) {
+    delay(1);
+    incrementObstacleNumber();
+    delay(1);
+  } else {
     stop();
+    delay(1);
     blinkLED(obstacle);
-  }
+    delay(1);
+}
+}
+
+void incrementObstacleNumber() {
+  obstacle++;
 }
 
   void stop() {
@@ -136,24 +143,20 @@ void loop() {
 
   if (mostLeftSensor() == 1 || mostRightSensor() == 1 || midLeftSensor() == 1 || midRightSensor() == 1) {
     goBack();
-    delay(650);
+    delay(750);
     turnRight();
-    delay(100); // new removed
+    delay(100); 
   } else {
     go();
   }
 
-
     if(digitalRead(MZ80_PIN)) {
       turnRight();
        } 
-      //else if(!digitalRead(MZ80_PIN)) {
-      //  obstacle++;
-      // }
 
-    if(time > 20000) {
-      obstacleDedected();
-      delay(500000);
+    if(time >= 20000) {
+      obstacleDetected();
+      delay(500000); // not to run again and again...
     }
 
       } 
